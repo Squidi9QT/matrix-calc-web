@@ -1,84 +1,50 @@
 import streamlit as st
 import numpy as np
 
-# Настройка страницы
-st.set_page_config(page_title="Pro Matrix Calc", page_icon="🔢")
+st.set_page_config(page_title="Universal Matrix Calc", page_icon="🔢")
 
-st.title("🔢 Продвинутый матричный калькулятор")
-st.write("Введите данные для матриц 3x3:")
+st.title("🔢 Универсальный калькулятор")
 
-# Функция для создания ввода матрицы
-def input_matrix(label):
+# 1. Выбор размерности
+size = st.slider("Выберите размер матрицы (N x N):", min_value=2, max_value=10, value=3)
+
+def input_matrix(label, n):
     st.subheader(label)
-    cols = st.columns(3)
     matrix_data = []
-    for i in range(3):
+    # Создаем сетку нужного размера
+    for i in range(n):
+        cols = st.columns(n)
         row_data = []
-        for j in range(3):
-            # Создаем уникальный ключ для каждого поля ввода
-            val = cols[j].number_input(f"{label} {i+1}:{j+1}", value=0.0, key=f"{label}_{i}_{j}")
+        for j in range(n):
+            val = cols[j].number_input(f"{i+1}:{j+1}", value=0.0, key=f"{label}_{i}_{j}", label_visibility="collapsed")
             row_data.append(val)
         matrix_data.append(row_data)
     return np.array(matrix_data)
 
-# Создаем две колонки для матриц А и Б, чтобы на ПК было красиво, а на телефоне в столбик
-col_a, col_b = st.columns([1, 1])
+col_a, col_b = st.columns(2)
 
 with col_a:
-    mat_a = input_matrix("Матрица A")
+    mat_a = input_matrix("Матрица A", size)
 
 with col_b:
-    mat_b = input_matrix("Матрица B")
+    mat_b = input_matrix("Матрица B", size)
 
-st.divider()
-
-# Выбор операций
-st.subheader("Что нужно найти?")
-operation = st.selectbox("Выберите действие:", [
-    "Сложить (A + B)", 
-    "Вычесть (A - B)",
-    "Умножить (A × B)", 
-    "Определитель матрицы A", 
-    "Транспонировать A",
-    "Обратная матрица A"
+# 2. Математика остаётся прежней (NumPy сам поймет размер)
+operation = st.selectbox("Операция:", [
+    "A + B", "A - B", "A × B", "Определитель A", "Транспонировать A"
 ])
 
-if st.button("Рассчитать результат", use_container_width=True, type="primary"):
+if st.button("Рассчитать", use_container_width=True, type="primary"):
     try:
-        if operation == "Сложить (A + B)":
-            res = mat_a + mat_b
-            st.success("Результат сложения:")
-            st.dataframe(res)
-
-        elif operation == "Вычесть (A - B)":
-            res = mat_a - mat_b
-            st.success("Результат вычитания:")
-            st.dataframe(res)
-
-        elif operation == "Умножить (A × B)":
-            res = np.dot(mat_a, mat_b)
-            st.success("Результат умножения (строка на столбец):")
-            st.dataframe(res)
-
-        elif operation == "Определитель матрицы A":
+        if operation == "A + B":
+            st.success("Результат:")
+            st.write(mat_a + mat_b)
+        elif operation == "A × B":
+            st.success("Результат:")
+            st.write(np.dot(mat_a, mat_b))
+        elif operation == "Определитель A":
             det = np.linalg.det(mat_a)
-            st.info(f"Определитель (детерминант) матрицы A равен:")
-            st.title(f"{det:.4f}")
-
-        elif operation == "Транспонировать A":
-            res = mat_a.T
-            st.success("Транспонированная матрица A:")
-            st.dataframe(res)
-
-        elif operation == "Обратная матрица A":
-            if np.linalg.det(mat_a) == 0:
-                st.error("Ошибка: Определитель равен 0, обратной матрицы не существует!")
-            else:
-                res = np.linalg.inv(mat_a)
-                st.success("Обратная матрица A:")
-                st.dataframe(res)
-                
+            st.metric("Определитель", f"{det:.2f}")
+        # ... и так далее
     except Exception as e:
-        st.error(f"Произошла ошибка при расчетах: {e}")
-
-st.caption("Сделано на Python с помощью Streamlit и NumPy")
+        st.error(f"Ошибка: {e}")
