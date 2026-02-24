@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 
-st.set_page_config(page_title="Pro Matrix Calc", layout="wide")
+st.set_page_config(page_title="Kurban Calc", layout="wide")
 
 st.title("Калькулятор Курбана")
 
