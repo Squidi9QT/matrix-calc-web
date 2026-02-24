@@ -5,7 +5,7 @@ st.set_page_config(page_title="Pro Matrix Calc", layout="wide")
 
 st.title("Калькулятор Курбана")
 
-# Функция для создания ввода матрицы любого размера
+
 def create_matrix_input(label, rows, cols):
     st.write(f"### {label} ({rows}x{cols})")
     matrix_data = []
@@ -13,12 +13,14 @@ def create_matrix_input(label, rows, cols):
         grid_cols = st.columns(cols)
         row_data = []
         for j in range(cols):
-            val = grid_cols[j].number_input(f"{label}{i}{j}", value=0.0, key=f"{label}_{i}_{j}", label_visibility="collapsed")
+            val = grid_cols[j].number_input(
+                f"{label}{i}{j}", 
+                value=0.0, step=1.0, key=f"{label}_{i}_{j}", label_visibility="collapsed")
             row_data.append(val)
         matrix_data.append(row_data)
     return np.array(matrix_data)
 
-# --- НАСТРОЙКИ РАЗМЕРОВ ---
+
 col_cfg1, col_cfg2 = st.columns(2)
 
 with col_cfg1:
@@ -33,7 +35,7 @@ with col_cfg2:
 
 st.divider()
 
-# --- ВВОД ДАННЫХ ---
+
 c1, c2 = st.columns(2)
 with c1:
     mat_a = create_matrix_input("A", rows_a, cols_a)
@@ -42,13 +44,13 @@ with c2:
 
 st.divider()
 
-# --- ОПЕРАЦИИ И ПРОВЕРКИ ---
+
 operation = st.selectbox("Что сделать?", ["A + B", "A - B", "A × B", "Определитель A", "Транспонировать A"])
 
 if st.button("Посчитать", use_container_width=True, type="primary"):
     try:
         if operation in ["A + B", "A - B"]:
-            # ПРАВИЛО: Размеры должны быть идентичны
+           
             if mat_a.shape != mat_b.shape:
                 st.error(f"Ошибка! Для {operation} матрицы должны быть одинакового размера. У вас {mat_a.shape} и {mat_b.shape}.")
             else:
@@ -57,7 +59,7 @@ if st.button("Посчитать", use_container_width=True, type="primary"):
                 st.write(res)
 
         elif operation == "A × B":
-            # ПРАВИЛО: Столбцы A == Строки B
+       
             if cols_a != rows_b:
                 st.error(f"Ошибка умножения! Число столбцов A ({cols_a}) должно быть равно числу строк B ({rows_b}).")
             else:
@@ -66,7 +68,7 @@ if st.button("Посчитать", use_container_width=True, type="primary"):
                 st.write(res)
 
         elif operation == "Определитель A":
-            # ПРАВИЛО: Только квадратные матрицы
+      
             if rows_a != cols_a:
                 st.error("Ошибка! Определитель можно найти только для квадратной матрицы (например, 2x2 или 3x3).")
             else:
