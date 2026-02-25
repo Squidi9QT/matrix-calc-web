@@ -1,12 +1,12 @@
 import streamlit as st
 import numpy as np
 
-# Настройка страницы
+
 st.set_page_config(page_title="Step-by-Step Math Calc", layout="wide")
 
-st.title("Математический калькулятор с детальным разбором шагов")
+st.title("Калькулятор Курбана")
 
-# Инициализация лога
+
 if 'log' not in st.session_state:
     st.session_state.log = ""
 
@@ -22,9 +22,9 @@ def log_matrix(matrix, name=""):
 def input_matrix(label, rows, cols, key_suffix):
     st.write(f"**{label}**")
     matrix_data = []
-    # Создаем контейнер с фиксированной шириной для компактности
+ 
     for i in range(rows):
-        # Используем маленькие веса для колонок, чтобы они были узкими
+       
         grid_cols = st.columns([1] * cols + [10 - cols]) 
         row_data = []
         for j in range(cols):
